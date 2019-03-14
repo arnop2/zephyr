@@ -28,7 +28,6 @@ source "arch/Kconfig"
 
 source "kernel/Kconfig"
 
-source "dts/Kconfig"
 
 source "drivers/Kconfig"
 
