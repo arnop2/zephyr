@@ -3100,7 +3100,7 @@ typedef struct
 #define SAI4                ((SAI_TypeDef *) SAI4_BASE)
 #define SAI4_Block_A        ((SAI_Block_TypeDef *)SAI4_Block_A_BASE)
 #define SAI4_Block_B        ((SAI_Block_TypeDef *)SAI4_Block_B_BASE)
-#define TMPSENS1             ((TMPSENS_TypeDef *) TMPSENS_BASE)
+#define DTS1                ((DTS_TypeDef *) DTS_BASE)
 #define PMB                 ((PMB_TypeDef *) PMB_BASE)
 #define SPDIFRX             ((SPDIFRX_TypeDef *) SPDIFRX_BASE)
 #define DFSDM1              ((DFSDM_TypeDef *) DFSDM1_BASE)
@@ -5764,7 +5764,7 @@ typedef struct
 
 /*****************  Bit definition for FDCAN_TXBC register  *********************/
 #define FDCAN_TXBC_TBSA_Pos       (2U)
-#define FDCAN_TXBC_TBSA_Msk       (0x3FU << FDCAN_TXBC_TBSA_Pos)               /*!< 0x000000FC */
+#define FDCAN_TXBC_TBSA_Msk       (0x3FFFU << FDCAN_TXBC_TBSA_Pos)             /*!< 0x000000FC */
 #define FDCAN_TXBC_TBSA           FDCAN_TXBC_TBSA_Msk                          /*!<Tx Buffers Start Address                  */
 #define FDCAN_TXBC_NDTB_Pos       (16U)
 #define FDCAN_TXBC_NDTB_Msk       (0x3FU << FDCAN_TXBC_NDTB_Pos)               /*!< 0x003F0000 */
@@ -6752,8 +6752,12 @@ typedef struct
 #define DAC_DHR12LD_DACC2DHR        DAC_DHR12LD_DACC2DHR_Msk                   /*!<DAC channel2 12-bit Left aligned data */
 
 /******************  Bit definition for DAC_DHR8RD register  ******************/
-#define DAC_DHR8RD_DACC1DHR         ((uint16_t)0x00FF)                         /*!<DAC channel1 8-bit Right aligned data */
-#define DAC_DHR8RD_DACC2DHR         ((uint16_t)0xFF00)                         /*!<DAC channel2 8-bit Right aligned data */
+#define DAC_DHR8RD_DACC1DHR_Pos     (0U)
+#define DAC_DHR8RD_DACC1DHR_Msk     (0xFFU << DAC_DHR8RD_DACC1DHR_Pos)         /*!< 0x000000FF */
+#define DAC_DHR8RD_DACC1DHR         DAC_DHR8RD_DACC1DHR_Msk                    /*!<DAC channel1 8-bit Right aligned data */
+#define DAC_DHR8RD_DACC2DHR_Pos     (0U)
+#define DAC_DHR8RD_DACC2DHR_Msk     (0xFFU << DAC_DHR8RD_DACC2DHR_Pos)         /*!< 0x000000FF */
+#define DAC_DHR8RD_DACC2DHR         DAC_DHR8RD_DACC2DHR_Msk                    /*!<DAC channel2 8-bit Right aligned data */
 
 /*******************  Bit definition for DAC_DOR1 register  *******************/
 #define DAC_DOR1_DACC1DOR           ((uint16_t)0x0FFF)                         /*!<DAC channel1 data output */
@@ -17385,7 +17389,7 @@ typedef struct
 #define RCC_APB3RSTSETR_SAI4RST               B(8)
 #define RCC_APB3RSTSETR_SYSCFGRST             B(11)
 #define RCC_APB3RSTSETR_VREFRST               B(13)
-#define RCC_APB3RSTSETR_TMPSENSRST            B(16)
+#define RCC_APB3RSTSETR_DTSRST                B(16)
 #define RCC_APB3RSTSETR_PMBCTRLRST            B(17)
 
 /*******************  Bit definition for RCC_APB3RSTCLRR register  ************/
@@ -17397,7 +17401,7 @@ typedef struct
 #define RCC_APB3RSTCLRR_SAI4RST               B(8)
 #define RCC_APB3RSTCLRR_SYSCFGRST             B(11)
 #define RCC_APB3RSTCLRR_VREFRST               B(13)
-#define RCC_APB3RSTCLRR_TMPSENSRST            B(16)
+#define RCC_APB3RSTCLRR_DTSRST                B(16)
 #define RCC_APB3RSTCLRR_PMBCTRLRST            B(17)
 
 /*******************  Bit definition for RCC_AHB2RSTSETR register  ************/
@@ -17662,7 +17666,7 @@ peripheral. It shall be used to deallocate a peripheral from MCU */
 #define RCC_MC_APB3ENSETR_SAI4EN              B(8)
 #define RCC_MC_APB3ENSETR_SYSCFGEN            B(11)
 #define RCC_MC_APB3ENSETR_VREFEN              B(13)
-#define RCC_MC_APB3ENSETR_TMPSENSEN           B(16)
+#define RCC_MC_APB3ENSETR_DTSEN               B(16)
 #define RCC_MC_APB3ENSETR_PMBCTRLEN           B(17)
 #define RCC_MC_APB3ENSETR_HDPEN               B(20)
 
@@ -17676,7 +17680,7 @@ peripheral. It shall be used to deallocate a peripheral from MCU */
 #define RCC_MC_APB3ENCLRR_SAI4EN              B(8)
 #define RCC_MC_APB3ENCLRR_SYSCFGEN            B(11)
 #define RCC_MC_APB3ENCLRR_VREFEN              B(13)
-#define RCC_MC_APB3ENCLRR_TMPSENSEN           B(16)
+#define RCC_MC_APB3ENCLRR_DTSEN               B(16)
 #define RCC_MC_APB3ENCLRR_PMBCTRLEN           B(17)
 #define RCC_MC_APB3ENCLRR_HDPEN               B(20)
 
@@ -18009,7 +18013,7 @@ peripheral. It shall be used to deallocate a peripheral from MCU */
 #define RCC_MC_APB3LPENSETR_SAI4LPEN              B(8)
 #define RCC_MC_APB3LPENSETR_SYSCFGLPEN            B(11)
 #define RCC_MC_APB3LPENSETR_VREFLPEN              B(13)
-#define RCC_MC_APB3LPENSETR_TMPSENSLPEN           B(16)
+#define RCC_MC_APB3LPENSETR_DTSLPEN               B(16)
 #define RCC_MC_APB3LPENSETR_PMBCTRLLPEN           B(17)
 
 /*******************  Bit definition for RCC_MC_APB3LPENCLRR register  ************/
@@ -18023,7 +18027,7 @@ peripheral. It shall be used to deallocate a peripheral from MCU */
 #define RCC_MC_APB3LPENCLRR_SAI4LPEN              B(8)
 #define RCC_MC_APB3LPENCLRR_SYSCFGLPEN            B(11)
 #define RCC_MC_APB3LPENCLRR_VREFLPEN              B(13)
-#define RCC_MC_APB3LPENCLRR_TMPSENSLPEN           B(16)
+#define RCC_MC_APB3LPENCLRR_DTSLPEN               B(16)
 #define RCC_MC_APB3LPENCLRR_PMBCTRLLPEN           B(17)
 
 /*******************  Bit definition for RCC_MC_APB4LPENSETR register  ***********/
@@ -21824,18 +21828,18 @@ peripheral. It shall be used to deallocate a peripheral from MCU */
 #define SPI_IER_OVRIE_Pos           (6U)
 #define SPI_IER_OVRIE_Msk           (0x1U << SPI_IER_OVRIE_Pos)                /*!< 0x00000040 */
 #define SPI_IER_OVRIE               SPI_IER_OVRIE_Msk                          /*!<OVR interrupt enable 						*/
-#define SPI_IER_CRCIE_Pos           (7U)
-#define SPI_IER_CRCIE_Msk           (0x1U << SPI_IER_CRCIE_Pos)                /*!< 0x00000080 */
-#define SPI_IER_CRCIE               SPI_IER_CRCIE_Msk                          /*!<CRC interrupt enable 						*/
+#define SPI_IER_CRCEIE_Pos           (7U)
+#define SPI_IER_CRCEIE_Msk           (0x1U << SPI_IER_CRCEIE_Pos)                /*!< 0x00000080 */
+#define SPI_IER_CRCEIE               SPI_IER_CRCEIE_Msk                          /*!<CRC interrupt enable 						*/
 #define SPI_IER_TIFREIE_Pos         (8U)
 #define SPI_IER_TIFREIE_Msk         (0x1U << SPI_IER_TIFREIE_Pos)              /*!< 0x00000100 */
 #define SPI_IER_TIFREIE             SPI_IER_TIFREIE_Msk                        /*!<TI Frame Error interrupt enable */
 #define SPI_IER_MODFIE_Pos          (9U)
 #define SPI_IER_MODFIE_Msk          (0x1U << SPI_IER_MODFIE_Pos)               /*!< 0x00000200 */
 #define SPI_IER_MODFIE              SPI_IER_MODFIE_Msk                         /*!<MODF interrupt enable 					*/
-#define SPI_IER_TSERIE_Pos          (10U)
-#define SPI_IER_TSERIE_Msk          (0x1U << SPI_IER_TSERIE_Pos)               /*!< 0x00000400 */
-#define SPI_IER_TSERIE              SPI_IER_TSERIE_Msk                         /*!<TSER interrupt enable 					*/
+#define SPI_IER_TSERFIE_Pos          (10U)
+#define SPI_IER_TSERFIE_Msk          (0x1U << SPI_IER_TSERFIE_Pos)               /*!< 0x00000400 */
+#define SPI_IER_TSERFIE              SPI_IER_TSERFIE_Msk                         /*!<TSERF interrupt enable 				*/
 
 /*******************  Bit definition for SPI_SR register  ********************/
 #define SPI_SR_RXP_Pos              (0U)
@@ -21939,9 +21943,9 @@ peripheral. It shall be used to deallocate a peripheral from MCU */
 #define SPI_TXCRC_TXCRC             SPI_TXCRC_TXCRC_Msk                        /* CRCRegister for transmitter */
 
 /*******************  Bit definition for SPI_RXCRC register  ********************/
-#define SPI_TXCRC_RXCRC_Pos         (0U)                                       
-#define SPI_TXCRC_RXCRC_Msk         (0xFFFFFFFFU << SPI_TXCRC_RXCRC_Pos)       /*!< 0xFFFFFFFF */
-#define SPI_TXCRC_RXCRC             SPI_TXCRC_RXCRC_Msk                        /* CRCRegister for receiver */
+#define SPI_RXCRC_RXCRC_Pos         (0U)                                       
+#define SPI_RXCRC_RXCRC_Msk         (0xFFFFFFFFU << SPI_RXCRC_RXCRC_Pos)       /*!< 0xFFFFFFFF */
+#define SPI_RXCRC_RXCRC             SPI_RXCRC_RXCRC_Msk                        /* CRCRegister for receiver */
 
 /*******************  Bit definition for SPI_UDRDR register  ********************/
 #define SPI_UDRDR_UDRDR_Pos         (0U)                                       
@@ -21977,14 +21981,14 @@ peripheral. It shall be used to deallocate a peripheral from MCU */
 #define SPI_I2SCFGR_CKPOL_Pos       (11U)
 #define SPI_I2SCFGR_CKPOL_Msk       (0x1U << SPI_I2SCFGR_CKPOL_Pos)            /*!< 0x00000800 */
 #define SPI_I2SCFGR_CKPOL           SPI_I2SCFGR_CKPOL_Msk                      /*!<Steady state clock polarity                       */
-#define SPI_I2SCFGR_WSINV_Pos       (12U)                                      
-#define SPI_I2SCFGR_WSINV_Msk       (0x1U << SPI_I2SCFGR_WSINV_Pos)            /*!< 0x00001000 */
-#define SPI_I2SCFGR_WSINV           SPI_I2SCFGR_WSINV_Msk                      /*!<Word select inversion                             */
-#define SPI_I2SCFGR_FIXCH_Pos       (13U)                                      
-#define SPI_I2SCFGR_FIXCH_Msk       (0x1U << SPI_I2SCFGR_FIXCH_Pos)            /*!< 0x00002000 */
+#define SPI_I2SCFGR_FIXCH_Pos       (12U)
+#define SPI_I2SCFGR_FIXCH_Msk       (0x1U << SPI_I2SCFGR_FIXCH_Pos)            /*!< 0x00001000 */
 #define SPI_I2SCFGR_FIXCH           SPI_I2SCFGR_FIXCH_Msk                      /*!<Fixed channel length in SLAVE                     */
-#define SPI_I2SCFGR_DATFMT_Pos      (12U)                                      
-#define SPI_I2SCFGR_DATFMT_Msk      (0x3U << SPI_I2SCFGR_DATFMT_Pos)           /*!< 0x00003000 */
+#define SPI_I2SCFGR_WSINV_Pos       (13U)
+#define SPI_I2SCFGR_WSINV_Msk       (0x1U << SPI_I2SCFGR_WSINV_Pos)            /*!< 0x00002000 */
+#define SPI_I2SCFGR_WSINV           SPI_I2SCFGR_WSINV_Msk                      /*!<Word select inversion                             */
+#define SPI_I2SCFGR_DATFMT_Pos      (14U)
+#define SPI_I2SCFGR_DATFMT_Msk      (0x1U << SPI_I2SCFGR_DATFMT_Pos)           /*!< 0x00003000 */
 #define SPI_I2SCFGR_DATFMT          SPI_I2SCFGR_DATFMT_Msk                     /*!<Data format                                       */
 #define SPI_I2SCFGR_I2SDIV_Pos      (16U)                                      
 #define SPI_I2SCFGR_I2SDIV_Msk      (0xFFU << SPI_I2SCFGR_I2SDIV_Pos)          /*!< 0x00FF0000 */
@@ -23236,13 +23240,13 @@ peripheral. It shall be used to deallocate a peripheral from MCU */
 #define TIM1_AF1_BKINP_Msk         (0x1U << TIM1_AF1_BKINP_Pos)                /*!< 0x00000200 */
 #define TIM1_AF1_BKINP             TIM1_AF1_BKINP_Msk                          /*!<BRKINP Break input polarity */
 
-#define TIM1_AF1_ETR_SEL_Pos       (14U)
-#define TIM1_AF1_ETR_SEL_Msk       (0xFU << TIM1_AF1_ETR_SEL_Pos)              /*!< 0x0003C000 */
-#define TIM1_AF1_ETR_SEL           TIM1_AF1_ETR_SEL_Msk                        /*!<ETR_SEL[3:0] bits (TIM1 ETR SEL) */
-#define TIM1_AF1_ETR_SEL_0         (0x1U << TIM1_AF1_ETR_SEL_Pos)              /*!< 0x00004000 */
-#define TIM1_AF1_ETR_SEL_1         (0x2U << TIM1_AF1_ETR_SEL_Pos)              /*!< 0x00008000 */
-#define TIM1_AF1_ETR_SEL_2         (0x4U << TIM1_AF1_ETR_SEL_Pos)              /*!< 0x00010000 */
-#define TIM1_AF1_ETR_SEL_3         (0x8U << TIM1_AF1_ETR_SEL_Pos)              /*!< 0x00020000 */
+#define TIM1_AF1_ETRSEL_Pos       (14U)
+#define TIM1_AF1_ETRSEL_Msk       (0xFU << TIM1_AF1_ETRSEL_Pos)              /*!< 0x0003C000 */
+#define TIM1_AF1_ETRSEL           TIM1_AF1_ETRSEL_Msk                        /*!<ETRSEL[3:0] bits (TIM1 ETR SEL) */
+#define TIM1_AF1_ETRSEL_0         (0x1U << TIM1_AF1_ETRSEL_Pos)              /*!< 0x00004000 */
+#define TIM1_AF1_ETRSEL_1         (0x2U << TIM1_AF1_ETRSEL_Pos)              /*!< 0x00008000 */
+#define TIM1_AF1_ETRSEL_2         (0x4U << TIM1_AF1_ETRSEL_Pos)              /*!< 0x00010000 */
+#define TIM1_AF1_ETRSEL_3         (0x8U << TIM1_AF1_ETRSEL_Pos)              /*!< 0x00020000 */
 
 /*******************  Bit definition for TIM1_AF2 register  *********************/
 #define TIM1_AF2_BK2INE_Pos        (0U)
@@ -23299,13 +23303,13 @@ peripheral. It shall be used to deallocate a peripheral from MCU */
 #define TIM8_AF1_BKINP_Msk         (0x1U << TIM8_AF1_BKINP_Pos)                /*!< 0x00000200 */
 #define TIM8_AF1_BKINP             TIM8_AF1_BKINP_Msk                          /*!<BRKINP Break input polarity */
 
-#define TIM8_AF1_ETR_SEL_Pos       (14U)
-#define TIM8_AF1_ETR_SEL_Msk       (0xFU << TIM8_AF1_ETR_SEL_Pos)              /*!< 0x0003C000 */
-#define TIM8_AF1_ETR_SEL           TIM8_AF1_ETR_SEL_Msk                        /*!<ETR_SEL[3:0] bits (TIM8 ETR SEL) */
-#define TIM8_AF1_ETR_SEL_0         (0x1U << TIM8_AF1_ETR_SEL_Pos)              /*!< 0x00004000 */
-#define TIM8_AF1_ETR_SEL_1         (0x2U << TIM8_AF1_ETR_SEL_Pos)              /*!< 0x00008000 */
-#define TIM8_AF1_ETR_SEL_2         (0x4U << TIM8_AF1_ETR_SEL_Pos)              /*!< 0x00010000 */
-#define TIM8_AF1_ETR_SEL_3         (0x8U << TIM8_AF1_ETR_SEL_Pos)              /*!< 0x00020000 */
+#define TIM8_AF1_ETRSEL_Pos       (14U)
+#define TIM8_AF1_ETRSEL_Msk       (0xFU << TIM8_AF1_ETRSEL_Pos)              /*!< 0x0003C000 */
+#define TIM8_AF1_ETRSEL           TIM8_AF1_ETRSEL_Msk                        /*!<ETRSEL[3:0] bits (TIM8 ETR SEL) */
+#define TIM8_AF1_ETRSEL_0         (0x1U << TIM8_AF1_ETRSEL_Pos)              /*!< 0x00004000 */
+#define TIM8_AF1_ETRSEL_1         (0x2U << TIM8_AF1_ETRSEL_Pos)              /*!< 0x00008000 */
+#define TIM8_AF1_ETRSEL_2         (0x4U << TIM8_AF1_ETRSEL_Pos)              /*!< 0x00010000 */
+#define TIM8_AF1_ETRSEL_3         (0x8U << TIM8_AF1_ETRSEL_Pos)              /*!< 0x00020000 */
 /*******************  Bit definition for TIM8_AF2 register  *********************/
 #define TIM8_AF2_BK2INE_Pos        (0U)
 #define TIM8_AF2_BK2INE_Msk        (0x1U << TIM8_AF2_BK2INE_Pos)               /*!< 0x00000001 */
@@ -23351,13 +23355,13 @@ peripheral. It shall be used to deallocate a peripheral from MCU */
 #define TIM8_TISEL_TI4SEL_3        (0x8U << TIM8_TISEL_TI4SEL_Pos)             /*!< 0x08000000 */
 
 /*******************  Bit definition for TIM2_AF1 register  *********************/
-#define TIM2_AF1_ETR_SEL_Pos       (14U)
-#define TIM2_AF1_ETR_SEL_Msk       (0xFU << TIM2_AF1_ETR_SEL_Pos)              /*!< 0x0003C000 */
-#define TIM2_AF1_ETR_SEL           TIM2_AF1_ETR_SEL_Msk                        /*!<ETR_SEL[3:0] bits (TIM2 ETR SEL) */
-#define TIM2_AF1_ETR_SEL_0         (0x1U << TIM2_AF1_ETR_SEL_Pos)              /*!< 0x00004000 */
-#define TIM2_AF1_ETR_SEL_1         (0x2U << TIM2_AF1_ETR_SEL_Pos)              /*!< 0x00008000 */
-#define TIM2_AF1_ETR_SEL_2         (0x4U << TIM2_AF1_ETR_SEL_Pos)              /*!< 0x00010000 */
-#define TIM2_AF1_ETR_SEL_3         (0x8U << TIM2_AF1_ETR_SEL_Pos)              /*!< 0x00020000 */
+#define TIM2_AF1_ETRSEL_Pos       (14U)
+#define TIM2_AF1_ETRSEL_Msk       (0xFU << TIM2_AF1_ETRSEL_Pos)              /*!< 0x0003C000 */
+#define TIM2_AF1_ETRSEL           TIM2_AF1_ETRSEL_Msk                        /*!<ETRSEL[3:0] bits (TIM2 ETR SEL) */
+#define TIM2_AF1_ETRSEL_0         (0x1U << TIM2_AF1_ETRSEL_Pos)              /*!< 0x00004000 */
+#define TIM2_AF1_ETRSEL_1         (0x2U << TIM2_AF1_ETRSEL_Pos)              /*!< 0x00008000 */
+#define TIM2_AF1_ETRSEL_2         (0x4U << TIM2_AF1_ETRSEL_Pos)              /*!< 0x00010000 */
+#define TIM2_AF1_ETRSEL_3         (0x8U << TIM2_AF1_ETRSEL_Pos)              /*!< 0x00020000 */
 
 /*******************  Bit definition for TIM2_TISEL register  *********************/
 #define TIM2_TISEL_TI1SEL_Pos      (0U)
@@ -23393,13 +23397,13 @@ peripheral. It shall be used to deallocate a peripheral from MCU */
 #define TIM2_TISEL_TI4SEL_3        (0x8U << TIM2_TISEL_TI4SEL_Pos)             /*!< 0x08000000 */
 
 /*******************  Bit definition for TIM3_AF1 register  *********************/
-#define TIM3_AF1_ETR_SEL_Pos       (14U)
-#define TIM3_AF1_ETR_SEL_Msk       (0xFU << TIM3_AF1_ETR_SEL_Pos)              /*!< 0x0003C000 */
-#define TIM3_AF1_ETR_SEL           TIM3_AF1_ETR_SEL_Msk                        /*!<ETR_SEL[3:0] bits (TIM3 ETR SEL) */
-#define TIM3_AF1_ETR_SEL_0         (0x1U << TIM3_AF1_ETR_SEL_Pos)              /*!< 0x00004000 */
-#define TIM3_AF1_ETR_SEL_1         (0x2U << TIM3_AF1_ETR_SEL_Pos)              /*!< 0x00008000 */
-#define TIM3_AF1_ETR_SEL_2         (0x4U << TIM3_AF1_ETR_SEL_Pos)              /*!< 0x00010000 */
-#define TIM3_AF1_ETR_SEL_3         (0x8U << TIM3_AF1_ETR_SEL_Pos)              /*!< 0x00020000 */
+#define TIM3_AF1_ETRSEL_Pos       (14U)
+#define TIM3_AF1_ETRSEL_Msk       (0xFU << TIM3_AF1_ETRSEL_Pos)              /*!< 0x0003C000 */
+#define TIM3_AF1_ETRSEL           TIM3_AF1_ETRSEL_Msk                        /*!<ETRSEL[3:0] bits (TIM3 ETR SEL) */
+#define TIM3_AF1_ETRSEL_0         (0x1U << TIM3_AF1_ETRSEL_Pos)              /*!< 0x00004000 */
+#define TIM3_AF1_ETRSEL_1         (0x2U << TIM3_AF1_ETRSEL_Pos)              /*!< 0x00008000 */
+#define TIM3_AF1_ETRSEL_2         (0x4U << TIM3_AF1_ETRSEL_Pos)              /*!< 0x00010000 */
+#define TIM3_AF1_ETRSEL_3         (0x8U << TIM3_AF1_ETRSEL_Pos)              /*!< 0x00020000 */
 
 /*******************  Bit definition for TIM3_TISEL register  *********************/
 #define TIM3_TISEL_TI1SEL_Pos      (0U)
@@ -23435,13 +23439,13 @@ peripheral. It shall be used to deallocate a peripheral from MCU */
 #define TIM3_TISEL_TI4SEL_3        (0x8U << TIM3_TISEL_TI4SEL_Pos)             /*!< 0x08000000 */
 
 /*******************  Bit definition for TIM5_AF1 register  *********************/
-#define TIM5_AF1_ETR_SEL_Pos       (14U)
-#define TIM5_AF1_ETR_SEL_Msk       (0xFU << TIM5_AF1_ETR_SEL_Pos)              /*!< 0x0003C000 */
-#define TIM5_AF1_ETR_SEL           TIM5_AF1_ETR_SEL_Msk                        /*!<ETR_SEL[3:0] bits (TIM5 ETR SEL) */
-#define TIM5_AF1_ETR_SEL_0         (0x1U << TIM5_AF1_ETR_SEL_Pos)              /*!< 0x00004000 */
-#define TIM5_AF1_ETR_SEL_1         (0x2U << TIM5_AF1_ETR_SEL_Pos)              /*!< 0x00008000 */
-#define TIM5_AF1_ETR_SEL_2         (0x4U << TIM5_AF1_ETR_SEL_Pos)              /*!< 0x00010000 */
-#define TIM5_AF1_ETR_SEL_3         (0x8U << TIM5_AF1_ETR_SEL_Pos)              /*!< 0x00020000 */
+#define TIM5_AF1_ETRSEL_Pos       (14U)
+#define TIM5_AF1_ETRSEL_Msk       (0xFU << TIM5_AF1_ETRSEL_Pos)              /*!< 0x0003C000 */
+#define TIM5_AF1_ETRSEL           TIM5_AF1_ETRSEL_Msk                        /*!<ETRSEL[3:0] bits (TIM5 ETR SEL) */
+#define TIM5_AF1_ETRSEL_0         (0x1U << TIM5_AF1_ETRSEL_Pos)              /*!< 0x00004000 */
+#define TIM5_AF1_ETRSEL_1         (0x2U << TIM5_AF1_ETRSEL_Pos)              /*!< 0x00008000 */
+#define TIM5_AF1_ETRSEL_2         (0x4U << TIM5_AF1_ETRSEL_Pos)              /*!< 0x00010000 */
+#define TIM5_AF1_ETRSEL_3         (0x8U << TIM5_AF1_ETRSEL_Pos)              /*!< 0x00020000 */
 
 /*******************  Bit definition for TIM5_TISEL register  *********************/
 #define TIM5_TISEL_TI1SEL_Pos      (0U)
@@ -23573,6 +23577,39 @@ peripheral. It shall be used to deallocate a peripheral from MCU */
 #define TIM17_TISEL_TI1SEL_1        (0x2U << TIM17_TISEL_TI1SEL_Pos)           /*!< 0x00000002 */
 #define TIM17_TISEL_TI1SEL_2        (0x4U << TIM17_TISEL_TI1SEL_Pos)           /*!< 0x00000004 */
 #define TIM17_TISEL_TI1SEL_3        (0x8U << TIM17_TISEL_TI1SEL_Pos)           /*!< 0x00000008 */
+
+/*******************  Bit definition for TIM_TISEL register  *********************/
+#define TIM_TISEL_TI1SEL_Pos      (0U)
+#define TIM_TISEL_TI1SEL_Msk      (0xFUL << TIM_TISEL_TI1SEL_Pos)              /*!< 0x0000000F */
+#define TIM_TISEL_TI1SEL          TIM_TISEL_TI1SEL_Msk                         /*!<TI1SEL[3:0] bits (TIM1 TI1 SEL)*/
+#define TIM_TISEL_TI1SEL_0        (0x1UL << TIM_TISEL_TI1SEL_Pos)              /*!< 0x00000001 */
+#define TIM_TISEL_TI1SEL_1        (0x2UL << TIM_TISEL_TI1SEL_Pos)              /*!< 0x00000002 */
+#define TIM_TISEL_TI1SEL_2        (0x4UL << TIM_TISEL_TI1SEL_Pos)              /*!< 0x00000004 */
+#define TIM_TISEL_TI1SEL_3        (0x8UL << TIM_TISEL_TI1SEL_Pos)              /*!< 0x00000008 */
+
+#define TIM_TISEL_TI2SEL_Pos      (8U)
+#define TIM_TISEL_TI2SEL_Msk      (0xFUL << TIM_TISEL_TI2SEL_Pos)              /*!< 0x00000F00 */
+#define TIM_TISEL_TI2SEL          TIM_TISEL_TI2SEL_Msk                         /*!<TI2SEL[3:0] bits (TIM1 TI2 SEL)*/
+#define TIM_TISEL_TI2SEL_0        (0x1UL << TIM_TISEL_TI2SEL_Pos)              /*!< 0x00000100 */
+#define TIM_TISEL_TI2SEL_1        (0x2UL << TIM_TISEL_TI2SEL_Pos)              /*!< 0x00000200 */
+#define TIM_TISEL_TI2SEL_2        (0x4UL << TIM_TISEL_TI2SEL_Pos)              /*!< 0x00000400 */
+#define TIM_TISEL_TI2SEL_3        (0x8UL << TIM_TISEL_TI2SEL_Pos)              /*!< 0x00000800 */
+
+#define TIM_TISEL_TI3SEL_Pos      (16U)
+#define TIM_TISEL_TI3SEL_Msk      (0xFUL << TIM_TISEL_TI3SEL_Pos)              /*!< 0x000F0000 */
+#define TIM_TISEL_TI3SEL          TIM_TISEL_TI3SEL_Msk                         /*!<TI3SEL[3:0] bits (TIM1 TI3 SEL)*/
+#define TIM_TISEL_TI3SEL_0        (0x1UL << TIM_TISEL_TI3SEL_Pos)              /*!< 0x00010000 */
+#define TIM_TISEL_TI3SEL_1        (0x2UL << TIM_TISEL_TI3SEL_Pos)              /*!< 0x00020000 */
+#define TIM_TISEL_TI3SEL_2        (0x4UL << TIM_TISEL_TI3SEL_Pos)              /*!< 0x00040000 */
+#define TIM_TISEL_TI3SEL_3        (0x8UL << TIM_TISEL_TI3SEL_Pos)              /*!< 0x00080000 */
+
+#define TIM_TISEL_TI4SEL_Pos      (24U)
+#define TIM_TISEL_TI4SEL_Msk      (0xFUL << TIM_TISEL_TI4SEL_Pos)              /*!< 0x0F000000 */
+#define TIM_TISEL_TI4SEL          TIM_TISEL_TI4SEL_Msk                         /*!<TI4SEL[3:0] bits (TIM1 TI4 SEL)*/
+#define TIM_TISEL_TI4SEL_0        (0x1UL << TIM_TISEL_TI4SEL_Pos)              /*!< 0x01000000 */
+#define TIM_TISEL_TI4SEL_1        (0x2UL << TIM_TISEL_TI4SEL_Pos)              /*!< 0x02000000 */
+#define TIM_TISEL_TI4SEL_2        (0x4UL << TIM_TISEL_TI4SEL_Pos)              /*!< 0x04000000 */
+#define TIM_TISEL_TI4SEL_3        (0x8UL << TIM_TISEL_TI4SEL_Pos)              /*!< 0x08000000 */
 
 /******************************************************************************/
 /*                                                                            */
@@ -23715,7 +23752,7 @@ peripheral. It shall be used to deallocate a peripheral from MCU */
 #define LPTIM_CR_ENABLE_Msk         (0x1U << LPTIM_CR_ENABLE_Pos)              /*!< 0x00000001 */
 #define LPTIM_CR_ENABLE             LPTIM_CR_ENABLE_Msk                        /*!< LPTIMer enable */
 #define LPTIM_CR_SNGSTRT_Pos        (1U)
-#define LPTIM_CR_SNGSTRT_Msk        (0x40001U << LPTIM_CR_SNGSTRT_Pos)         /*!< 0x00080002 */
+#define LPTIM_CR_SNGSTRT_Msk        (0x1U << LPTIM_CR_SNGSTRT_Pos)             /*!< 0x00000002 */
 #define LPTIM_CR_SNGSTRT            LPTIM_CR_SNGSTRT_Msk                       /*!< Timer start in single mode */
 #define LPTIM_CR_CNTSTRT_Pos        (2U)
 #define LPTIM_CR_CNTSTRT_Msk        (0x1U << LPTIM_CR_CNTSTRT_Pos)             /*!< 0x00000004 */
@@ -23743,34 +23780,38 @@ peripheral. It shall be used to deallocate a peripheral from MCU */
 #define LPTIM_CNT_CNT_Msk           (0xFFFFU << LPTIM_CNT_CNT_Pos)             /*!< 0x0000FFFF */
 #define LPTIM_CNT_CNT               LPTIM_CNT_CNT_Msk                          /*!< Counter register */
 
-/******************  Bit definition for LPTIM_OR register  *******************/
-#define LPTIM_CFGR2_CFGR2_Pos       (0U)
-#define LPTIM_CFGR2_CFGR2_Msk       (0xFFU << LPTIM_CFGR2_CFGR2_Pos)           /*!< 0x000000FF */
-#define LPTIM_CFGR2_CFGR2           LPTIM_CFGR2_CFGR2_Msk                      /*!< LPTIMER_ CFGR2[7:0] bits (Remap selection) */
-#define LPTIM_CFGR2_IN1_SEL0_Pos    (0U)
-#define LPTIM_CFGR2_IN1_SEL0_Msk    (0x1U << LPTIM_CFGR2_IN1_SEL0_Pos)         /*!< 0x00000001 */
-#define LPTIM_CFGR2_IN1_SEL0        LPTIM_CFGR2_IN1_SEL0_Msk                   /*!< Bit 0 */
-#define LPTIM_CFGR2_IN1_SEL1_Pos    (1U)
-#define LPTIM_CFGR2_IN1_SEL1_Msk    (0x1U << LPTIM_CFGR2_IN1_SEL1_Pos)         /*!< 0x00000002 */
-#define LPTIM_CFGR2_IN1_SEL1        LPTIM_CFGR2_IN1_SEL1_Msk                   /*!< Bit 1 */
-#define LPTIM_CFGR2_IN1_SEL2_Pos    (2U)
-#define LPTIM_CFGR2_IN1_SEL2_Msk    (0x1U << LPTIM_CFGR2_IN1_SEL2_Pos)         /*!< 0x00000004 */
-#define LPTIM_CFGR2_IN1_SEL2        LPTIM_CFGR2_IN1_SEL2_Msk                   /*!< Bit 2 */
-#define LPTIM_CFGR2_IN1_SEL3_Pos    (3U)
-#define LPTIM_CFGR2_IN1_SEL3_Msk    (0x1U << LPTIM_CFGR2_IN1_SEL3_Pos)         /*!< 0x00000008 */
-#define LPTIM_CFGR2_IN1_SEL3        LPTIM_CFGR2_IN1_SEL3_Msk                   /*!< Bit 3 */
-#define LPTIM_CFGR2_IN2_SEL0_Pos    (4U)
-#define LPTIM_CFGR2_IN2_SEL0_Msk    (0x1U << LPTIM_CFGR2_IN2_SEL0_Pos)         /*!< 0x00000010 */
-#define LPTIM_CFGR2_IN2_SEL0        LPTIM_CFGR2_IN2_SEL0_Msk                   /*!< Bit 4 */
-#define LPTIM_CFGR2_IN2_SEL1_Pos    (5U)
-#define LPTIM_CFGR2_IN2_SEL1_Msk    (0x1U << LPTIM_CFGR2_IN2_SEL1_Pos)         /*!< 0x00000020 */
-#define LPTIM_CFGR2_IN2_SEL1        LPTIM_CFGR2_IN2_SEL1_Msk                   /*!< Bit 5 */
-#define LPTIM_CFGR2_IN2_SEL2_Pos    (6U)
-#define LPTIM_CFGR2_IN2_SEL2_Msk    (0x1U << LPTIM_CFGR2_IN2_SEL2_Pos)         /*!< 0x00000040 */
-#define LPTIM_CFGR2_IN2_SEL2        LPTIM_CFGR2_IN2_SEL2_Msk                   /*!< Bit 6 */
-#define LPTIM_CFGR2_IN2_SEL3_Pos    (7U)
-#define LPTIM_CFGR2_IN2_SEL3_Msk    (0x1U << LPTIM_CFGR2_IN2_SEL3_Pos)         /*!< 0x00000080 */
-#define LPTIM_CFGR2_IN2_SEL3        LPTIM_CFGR2_IN2_SEL3_Msk                   /*!< Bit 7 */
+/******************  Bit definition for LPTIM_CFGR2 register  *******************/
+#define LPTIM_CFGR2_IN1SEL_Pos      (0U)
+#define LPTIM_CFGR2_IN1SEL_Msk      (0xFUL << LPTIM_CFGR2_IN1SEL_Pos)          /*!< 0x0000000F */
+#define LPTIM_CFGR2_IN1SEL          LPTIM_CFGR2_IN1SEL_Msk                     /*!< CFGR2[3:0] bits (INPUT1 selection) */
+#define LPTIM_CFGR2_IN1SEL_0_Pos    (LPTIM_CFGR2_IN1SEL_Pos)
+#define LPTIM_CFGR2_IN1SEL_0_Msk    (0x1U << LPTIM_CFGR2_IN1SEL_0_Pos)         /*!< 0x00000001 */
+#define LPTIM_CFGR2_IN1SEL_0        LPTIM_CFGR2_IN1SEL_0_Msk                   /*!< Bit 0 */
+#define LPTIM_CFGR2_IN1SEL_1_Pos    (1U)
+#define LPTIM_CFGR2_IN1SEL_1_Msk    (0x1U << LPTIM_CFGR2_IN1SEL_1_Pos)         /*!< 0x00000002 */
+#define LPTIM_CFGR2_IN1SEL_1        LPTIM_CFGR2_IN1SEL_1_Msk                   /*!< Bit 1 */
+#define LPTIM_CFGR2_IN1SEL_2_Pos    (2U)
+#define LPTIM_CFGR2_IN1SEL_2_Msk    (0x1U << LPTIM_CFGR2_IN1SEL_2_Pos)         /*!< 0x00000004 */
+#define LPTIM_CFGR2_IN1SEL_2        LPTIM_CFGR2_IN1SEL_2_Msk                   /*!< Bit 2 */
+#define LPTIM_CFGR2_IN1SEL_3_Pos    (3U)
+#define LPTIM_CFGR2_IN1SEL_3_Msk    (0x1U << LPTIM_CFGR2_IN1SEL_3_Pos)         /*!< 0x00000008 */
+#define LPTIM_CFGR2_IN1SEL_3        LPTIM_CFGR2_IN1SEL_3_Msk                   /*!< Bit 3 */
+
+#define LPTIM_CFGR2_IN2SEL_Pos      (4U)
+#define LPTIM_CFGR2_IN2SEL_Msk      (0xFUL << LPTIM_CFGR2_IN2SEL_Pos)          /*!< 0x000000F0 */
+#define LPTIM_CFGR2_IN2SEL          LPTIM_CFGR2_IN2SEL_Msk                     /*!< CFGR2[7:4] bits (INPUT2 selection) */
+#define LPTIM_CFGR2_IN2SEL_0_Pos    (LPTIM_CFGR2_IN2SEL_Pos)
+#define LPTIM_CFGR2_IN2SEL_0_Msk    (0x1U << LPTIM_CFGR2_IN2SEL_0_Pos)         /*!< 0x00000010 */
+#define LPTIM_CFGR2_IN2SEL_0        LPTIM_CFGR2_IN2SEL_0_Msk                   /*!< Bit 4 */
+#define LPTIM_CFGR2_IN2SEL_1_Pos    (5U)
+#define LPTIM_CFGR2_IN2SEL_1_Msk    (0x1U << LPTIM_CFGR2_IN2SEL_1_Pos)         /*!< 0x00000020 */
+#define LPTIM_CFGR2_IN2SEL_1        LPTIM_CFGR2_IN2SEL_1_Msk                   /*!< Bit 5 */
+#define LPTIM_CFGR2_IN2SEL_2_Pos    (6U)
+#define LPTIM_CFGR2_IN2SEL_2_Msk    (0x1U << LPTIM_CFGR2_IN2SEL_2_Pos)         /*!< 0x00000040 */
+#define LPTIM_CFGR2_IN2SEL_2        LPTIM_CFGR2_IN2SEL_2_Msk                   /*!< Bit 6 */
+#define LPTIM_CFGR2_IN2SEL_3_Pos    (7U)
+#define LPTIM_CFGR2_IN2SEL_3_Msk    (0x1U << LPTIM_CFGR2_IN2SEL_3_Pos)         /*!< 0x00000080 */
+#define LPTIM_CFGR2_IN2SEL_3        LPTIM_CFGR2_IN2SEL_3_Msk                   /*!< Bit 7 */
 
 /******************************************************************************/
 /*                                                                            */
@@ -25950,8 +25991,8 @@ peripheral. It shall be used to deallocate a peripheral from MCU */
 
 #define IS_ADC_COMMON_INSTANCE(INSTANCE) ((INSTANCE) == ADC12_COMMON)
 
-/******************************** TMPSENS Instances ******************************/
-#define IS_TMPSENS_ALL_INSTANCE(INSTANCE) ((INSTANCE) == TMPSENS1)
+/******************************** DTS Instances ******************************/
+#define IS_DTS_ALL_INSTANCE(INSTANCE) ((INSTANCE) == DTS1)
 
 
 /******************************* CRC Instances ********************************/
@@ -25963,7 +26004,7 @@ peripheral. It shall be used to deallocate a peripheral from MCU */
 #define IS_DAC_ALL_INSTANCE(INSTANCE) ((INSTANCE) == DAC1)
 
 /******************************* DCMI Instances *******************************/
-#define IS_DCMI_ALL_INSTANCE(__INSTANCE__) ((__INSTANCE__) == DCMI)
+#define IS_DCMI_ALL_INSTANCE(INSTANCE) ((INSTANCE) == DCMI)
 
 /****************************** DFSDM Instances *******************************/
 #define IS_DFSDM_FILTER_ALL_INSTANCE(INSTANCE) (((INSTANCE) == DFSDM1_Filter0) || \
@@ -26025,13 +26066,13 @@ peripheral. It shall be used to deallocate a peripheral from MCU */
                                                ((INSTANCE) == MDMA_Channel15) || \
                                                ((INSTANCE) == MDMA_Channel16))
 /******************************* QUADSPI Instances *******************************/
-#define IS_QSPI_ALL_INSTANCE(__INSTANCE__) ((__INSTANCE__) == QUADSPI)
+#define IS_QSPI_ALL_INSTANCE(INSTANCE) ((INSTANCE) == QUADSPI)
 
 /******************************* FDCAN Instances ******************************/
-#define IS_FDCAN_ALL_INSTANCE(__INSTANCE__) (((__INSTANCE__) == FDCAN1) || \
-                                             ((__INSTANCE__) == FDCAN2))
+#define IS_FDCAN_ALL_INSTANCE(INSTANCE) (((INSTANCE) == FDCAN1) || \
+                                             ((INSTANCE) == FDCAN2))
 
-#define IS_FDCAN_TT_INSTANCE(__INSTANCE__) ((__INSTANCE__) == FDCAN1)
+#define IS_FDCAN_TT_INSTANCE(INSTANCE) ((INSTANCE) == FDCAN1)
 
 /******************************* GPIO Instances *******************************/
 #define IS_GPIO_ALL_INSTANCE(INSTANCE) (((INSTANCE) == GPIOA) || \
@@ -26137,6 +26178,10 @@ peripheral. It shall be used to deallocate a peripheral from MCU */
                                          ((INSTANCE) == LPTIM3) ||\
                                          ((INSTANCE) == LPTIM4) ||\
                                          ((INSTANCE) == LPTIM5))
+
+/****************** LPTIM Instances : supporting encoder interface **************/
+#define IS_LPTIM_ENCODER_INTERFACE_INSTANCE(INSTANCE)     (((INSTANCE) == LPTIM1) || \
+                                                           ((INSTANCE) == LPTIM2))
 
 /****************** TIM Instances : All supported instances *******************/
 #define IS_TIM_INSTANCE(INSTANCE)       (((INSTANCE) == TIM1)   || \
@@ -26284,6 +26329,16 @@ peripheral. It shall be used to deallocate a peripheral from MCU */
                                             ((INSTANCE) == TIM12)  || \
                                             ((INSTANCE) == TIM15))
 
+/****************** TIM Instances : remapping capability **********************/
+#define IS_TIM_REMAP_INSTANCE(INSTANCE) (((INSTANCE) == TIM1)  || \
+                                          ((INSTANCE) == TIM2)  || \
+                                          ((INSTANCE) == TIM3)  || \
+                                          ((INSTANCE) == TIM5)  || \
+                                          ((INSTANCE) == TIM8))
+
+/****************** TIM Instances : supporting synchronization ****************/
+#define IS_TIM_SYNCHRO_INSTANCE(INSTANCE)  IS_TIM_MASTER_INSTANCE(INSTANCE)
+
 /****** TIM Instances : TRGO2 available (TIMx_CR2.MMS2 available )*********/
 #define IS_TIM_TRGO2_INSTANCE(INSTANCE)   (((INSTANCE) == TIM1)   || \
                                            ((INSTANCE) == TIM8))
@@ -26374,6 +26429,14 @@ peripheral. It shall be used to deallocate a peripheral from MCU */
        ((INSTANCE) == TIM15)   || \
        ((INSTANCE) == TIM16)   || \
        ((INSTANCE) == TIM17))
+
+/************** TIM Instances : supporting Break source selection *************/
+#define IS_TIM_BREAKSOURCE_INSTANCE(INSTANCE) (((INSTANCE) == TIM1)   || \
+                                               ((INSTANCE) == TIM8)   || \
+                                               ((INSTANCE) == TIM15)  || \
+                                               ((INSTANCE) == TIM16)  || \
+                                               ((INSTANCE) == TIM17))
+
 /****************** TIM Instances : supporting complementary output(s) ********/
 #define IS_TIM_CCXN_INSTANCE(INSTANCE, CHANNEL) \
    ((((INSTANCE) == TIM1) &&                    \
@@ -26474,6 +26537,26 @@ peripheral. It shall be used to deallocate a peripheral from MCU */
 #define IS_TIM_BKIN2_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM1)    || \
    ((INSTANCE) == TIM8))
+
+/************ TIM Instances : Advanced timers  ********************************/
+#define IS_TIM_ADVANCED_INSTANCE(INSTANCE) (((INSTANCE) == TIM1) || \
+                                            ((INSTANCE) == TIM8))
+
+/****************** TIM Instances : supporting encoder interface **************/
+#define IS_TIM_ENCODER_INTERFACE_INSTANCE(INSTANCE)  (((INSTANCE) == TIM1)  || \
+                                                      ((INSTANCE) == TIM2)      || \
+                                                      ((INSTANCE) == TIM3)      || \
+                                                      ((INSTANCE) == TIM4)      || \
+                                                      ((INSTANCE) == TIM5)      || \
+                                                      ((INSTANCE) == TIM8))
+
+/****************** TIM Instances : supporting Hall sensor interface **********/
+#define IS_TIM_HALL_SENSOR_INTERFACE_INSTANCE(__INSTANCE__) (((__INSTANCE__) == TIM1)  || \
+                                                             ((__INSTANCE__) == TIM2)  || \
+                                                             ((__INSTANCE__) == TIM3)  || \
+                                                             ((__INSTANCE__) == TIM4)  || \
+                                                             ((__INSTANCE__) == TIM5)  || \
+                                                             ((__INSTANCE__) == TIM8))
 
 /******************** USART Instances : Synchronous mode **********************/
 #define IS_USART_INSTANCE(INSTANCE) (((INSTANCE) == USART1) || \
@@ -26599,7 +26682,7 @@ peripheral. It shall be used to deallocate a peripheral from MCU */
 #define IS_MDIOS_ALL_INSTANCE(INSTANCE)  ((INSTANCE) == MDIOS)
 
 /****************************** CEC Instances *********************************/
-#define IS_CEC_ALL_INSTANCE(__INSTANCE__) ((__INSTANCE__) == CEC)
+#define IS_CEC_ALL_INSTANCE(INSTANCE) ((INSTANCE) == CEC)
 
 /****************************** SAI Instances ********************************/
 #define IS_SAI_ALL_INSTANCE(INSTANCE) (((INSTANCE) == SAI1_Block_A) || \
@@ -26615,124 +26698,124 @@ peripheral. It shall be used to deallocate a peripheral from MCU */
 #define IS_SPDIFRX_ALL_INSTANCE(INSTANCE) ((INSTANCE) == SPDIFRX)
 
 /******************************* BSEC VERSION ********************************/
-#define BSEC_VERSION(__INSTANCE__) ((__INSTANCE__)->VER)
+#define BSEC_VERSION(INSTANCE) ((INSTANCE)->VER)
 
 /******************************* TZPC VERSION ********************************/
-#define TZPC_VERSION(__INSTANCE__) ((__INSTANCE__)->IP_VER)
+#define TZPC_VERSION(INSTANCE) ((INSTANCE)->IP_VER)
 
 /******************************* FMC VERSION ********************************/
-#define FMC_VERSION(__INSTANCE__) ((__INSTANCE__)->VERR)
+#define FMC_VERSION(INSTANCE) ((INSTANCE)->VERR)
 
 /******************************* SYSCFG VERSION ********************************/
-#define SYSCFG_VERSION(__INSTANCE__) ((__INSTANCE__)->VERR)
+#define SYSCFG_VERSION(INSTANCE) ((INSTANCE)->VERR)
 
 /******************************* ETHERNET VERSION ********************************/
-#define ETH_VERSION(__INSTANCE__) ((__INSTANCE__)->MACVR)
+#define ETH_VERSION(INSTANCE) ((INSTANCE)->MACVR)
 
 
 /******************************* SYSCFG VERSION ********************************/
-#define EXTI_VERSION(__INSTANCE__) ((__INSTANCE__)->VERR)
+#define EXTI_VERSION(INSTANCE) ((INSTANCE)->VERR)
 
 /******************************* PWR VERSION ********************************/
-#define PWR_VERSION(__INSTANCE__) ((__INSTANCE__)->VER)
+#define PWR_VERSION(INSTANCE) ((INSTANCE)->VER)
 
 /******************************* RCC VERSION ********************************/
-#define RCC_VERSION(__INSTANCE__) ((__INSTANCE__)->VERR)
+#define RCC_VERSION(INSTANCE) ((INSTANCE)->VERR)
 
 /******************************* HDP VERSION ********************************/
-#define HDP_VERSION(__INSTANCE__) ((__INSTANCE__)->VERR)
+#define HDP_VERSION(INSTANCE) ((INSTANCE)->VERR)
 
 /******************************* IPCC VERSION ********************************/
-#define IPCC_VERSION(__INSTANCE__) ((__INSTANCE__)->VER)
+#define IPCC_VERSION(INSTANCE) ((INSTANCE)->VER)
 
 /******************************* HSEM VERSION ********************************/
-#define HSEM_VERSION(__INSTANCE__) ((__INSTANCE__)->VERR)
+#define HSEM_VERSION(INSTANCE) ((INSTANCE)->VERR)
 
 /******************************* GPIO VERSION ********************************/
-#define GPIO_VERSION(__INSTANCE__) ((__INSTANCE__)->VERR)
+#define GPIO_VERSION(INSTANCE) ((INSTANCE)->VERR)
 
 /******************************* DMA VERSION ********************************/
-#define DMA_VERSION(__INSTANCE__) ((__INSTANCE__)->VERR)
+#define DMA_VERSION(INSTANCE) ((INSTANCE)->VERR)
 
 /******************************* DMAMUX VERSION ********************************/
-#define DMAMUX_VERSION(__INSTANCE__) ((__INSTANCE__)->VERR)
+#define DMAMUX_VERSION(INSTANCE) ((INSTANCE)->VERR)
 
 /******************************* MDMA VERSION ********************************/
-#define MDMA_VERSION(__INSTANCE__) ((__INSTANCE__)->VERR)
+#define MDMA_VERSION(INSTANCE) ((INSTANCE)->VERR)
 
 /******************************* TAMP VERSION ********************************/
-#define TAMP_VERSION(__INSTANCE__) ((__INSTANCE__)->VERR)
+#define TAMP_VERSION(INSTANCE) ((INSTANCE)->VERR)
 
 /******************************* RTC VERSION ********************************/
-#define RTC_VERSION(__INSTANCE__) ((__INSTANCE__)->VERR)
+#define RTC_VERSION(INSTANCE) ((INSTANCE)->VERR)
 
 /******************************* SDMMC VERSION ********************************/
-#define SDMMC_VERSION(__INSTANCE__) ((__INSTANCE__)->VERR)
+#define SDMMC_VERSION(INSTANCE) ((INSTANCE)->VERR)
 
 /******************************* QUADSPI VERSION ********************************/
-#define QUADSPI_VERSION(__INSTANCE__) ((__INSTANCE__)->VERR)
+#define QUADSPI_VERSION(INSTANCE) ((INSTANCE)->VERR)
 
 /******************************* CRC VERSION ********************************/
-#define CRC_VERSION(__INSTANCE__) ((__INSTANCE__)->VERR)
+#define CRC_VERSION(INSTANCE) ((INSTANCE)->VERR)
 
 /******************************* RNG VERSION ********************************/
-#define RNG_VERSION(__INSTANCE__) ((__INSTANCE__)->VER)
+#define RNG_VERSION(INSTANCE) ((INSTANCE)->VER)
 
 /******************************* HASH VERSION ********************************/
-#define HASH_VERSION(__INSTANCE__) ((__INSTANCE__)->VER)
+#define HASH_VERSION(INSTANCE) ((INSTANCE)->VER)
 
 
 /******************************* DCMI VERSION ********************************/
-#define DCMI_VERSION(__INSTANCE__) ((__INSTANCE__)->VERR)
+#define DCMI_VERSION(INSTANCE) ((INSTANCE)->VERR)
 
 /******************************* CEC VERSION ********************************/
-#define CEC_VERSION(__INSTANCE__) ((__INSTANCE__)->VERR)
+#define CEC_VERSION(INSTANCE) ((INSTANCE)->VERR)
 
 /******************************* LPTIM VERSION ********************************/
-#define LPTIM_VERSION(__INSTANCE__) ((__INSTANCE__)->VERR)
+#define LPTIM_VERSION(INSTANCE) ((INSTANCE)->VERR)
 
 /******************************* TIM VERSION ********************************/
-#define TIM_VERSION(__INSTANCE__) ((__INSTANCE__)->VERR)
+#define TIM_VERSION(INSTANCE) ((INSTANCE)->VERR)
 
 /******************************* IWDG VERSION ********************************/
-#define IWDG_VERSION(__INSTANCE__) ((__INSTANCE__)->VERR)
+#define IWDG_VERSION(INSTANCE) ((INSTANCE)->VERR)
 
 /******************************* WWDG VERSION ********************************/
-#define WWDG_VERSION(__INSTANCE__) ((__INSTANCE__)->VERR)
+#define WWDG_VERSION(INSTANCE) ((INSTANCE)->VERR)
 
 /******************************* DFSDM VERSION ********************************/
-#define DFSDM_VERSION(__INSTANCE__) ((__INSTANCE__)->VERR)
+#define DFSDM_VERSION(INSTANCE) ((INSTANCE)->VERR)
 
 /******************************* SAI VERSION ********************************/
-#define SAI_VERSION(__INSTANCE__) ((__INSTANCE__)->VERR)
+#define SAI_VERSION(INSTANCE) ((INSTANCE)->VERR)
 
 /******************************* MDIOS VERSION ********************************/
-#define MDIOS_VERSION(__INSTANCE__) ((__INSTANCE__)->VERR)
+#define MDIOS_VERSION(INSTANCE) ((INSTANCE)->VERR)
 
 /******************************* I2C VERSION ********************************/
-#define I2C_VERSION(__INSTANCE__) ((__INSTANCE__)->VERR)
+#define I2C_VERSION(INSTANCE) ((INSTANCE)->VERR)
 
 /******************************* USART VERSION ********************************/
-#define USART_VERSION(__INSTANCE__) ((__INSTANCE__)->VERR)
+#define USART_VERSION(INSTANCE) ((INSTANCE)->VERR)
 
 /******************************* SPDIFRX VERSION ********************************/
-#define SPDIFRX_VERSION(__INSTANCE__) ((__INSTANCE__)->VERR)
+#define SPDIFRX_VERSION(INSTANCE) ((INSTANCE)->VERR)
 
 /******************************* SPI VERSION ********************************/
-#define SPI_VERSION(__INSTANCE__) ((__INSTANCE__)->VERR)
+#define SPI_VERSION(INSTANCE) ((INSTANCE)->VERR)
 
 /******************************* ADC VERSION ********************************/
-#define ADC_VERSION(__INSTANCE__) ((__INSTANCE__)->VERR)
+#define ADC_VERSION(INSTANCE) ((INSTANCE)->VERR)
 
 /******************************* DLYB VERSION ********************************/
-#define DLYB_VERSION(__INSTANCE__) ((__INSTANCE__)->VERR)
+#define DLYB_VERSION(INSTANCE) ((INSTANCE)->VERR)
 
 /******************************* DAC VERSION ********************************/
-#define DAC_VERSION(__INSTANCE__) ((__INSTANCE__)->IP_VER)
+#define DAC_VERSION(INSTANCE) ((INSTANCE)->IP_VER)
 
 
 /******************************* USBPHYC VERSION ********************************/
-#define USBPHYC_VERSION(__INSTANCE__) ((__INSTANCE__)->VERR)
+#define USBPHYC_VERSION(INSTANCE) ((INSTANCE)->VERR)
 
 /******************************* DEVICE VERSION ********************************/
 #define DEVICE_REVISION() (((DBGMCU->IDCODE) & (DBGMCU_IDCODE_REV_ID_Msk)) >> DBGMCU_IDCODE_REV_ID_Pos)
