@@ -34,4 +34,28 @@ config SPI_4
 
 endif # SPI
 
+if BT
+
+if SPI
+
+choice BT_HCI_BUS_TYPE
+	default BT_SPI
+endchoice
+
+config BT_SPI_BLUENRG
+	default y
+
+config BT_BLUENRG_ACI
+	default y
+
+config BT_HCI_ACL_FLOW_CONTROL
+	default n
+
+config BT_HCI_VS_EXT
+	default n
+
+endif #BT_SPI_BLUENRG
+
+endif #BT
+
 endif # BOARD_STM32MP157_Dk2

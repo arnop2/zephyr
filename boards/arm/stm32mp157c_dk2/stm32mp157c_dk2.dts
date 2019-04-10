@@ -35,6 +35,16 @@ arduino_spi: &spi4 {};
 
 &spi4 {
 	status = "ok";
+	cs-gpios = <&gpioe 11 0>;
+
+	spbtle-rf@0 {
+		compatible = "zephyr,bt-hci-spi";
+		reg = <0>;
+		reset-gpios = <&gpiod 1 0>;
+		irq-gpios = <&gpioh 6 0>;
+		spi-max-frequency = <2000000>;
+		label = "SPBTLE-RF";
+	};
 };
 
 &spi5 {
