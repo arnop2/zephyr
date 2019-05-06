@@ -31,6 +31,13 @@ LOG_MODULE_REGISTER(spi_ll_stm32);
  * error flag, because STM32F1 SoCs do not support it and  STM32CUBE
  * for F1 family defines an unused LL_SPI_SR_FRE.
  */
+
+#ifdef CONFIG_SOC_SERIES_STM32MP1X
+#define SPI_STM32_ERR_MSK (LL_SPI_SR_UDR | LL_SPI_SR_CRCE | LL_SPI_SR_MODF | \
+			   LL_SPI_SR_OVR | LL_SPI_SR_TIFRE)
+
+#else /* STM32MP1 */
+
 #if defined(LL_SPI_SR_UDR)
 #define SPI_STM32_ERR_MSK (LL_SPI_SR_UDR | LL_SPI_SR_CRCERR | LL_SPI_SR_MODF | \
 			   LL_SPI_SR_OVR | LL_SPI_SR_FRE)
@@ -40,6 +47,8 @@ LOG_MODULE_REGISTER(spi_ll_stm32);
 #else
 #define SPI_STM32_ERR_MSK (LL_SPI_SR_CRCERR | LL_SPI_SR_MODF | LL_SPI_SR_OVR)
 #endif
+
+#endif /* STM32MP1 */
 
 /* Value to shift out when no application data needs transmitting. */
 #define SPI_STM32_TX_NOP 0x00
@@ -90,9 +99,20 @@ static void spi_stm32_shift_m(SPI_TypeDef *spi, struct spi_stm32_data *data)
 	u16_t rx_frame;
 
 	tx_frame = spi_stm32_next_tx(data);
-	while (!LL_SPI_IsActiveFlag_TXE(spi)) {
-		/* NOP */
+
+	#ifdef CONFIG_SOC_SERIES_STM32MP1X
+	while (!LL_SPI_IsActiveFlag_TXP(spi)) {
+		/* NOP if not enough space for a packet*/
 	}
+	if (LL_SPI_IsEnabled(spi) && LL_SPI_GetMode(spi)) {
+		LL_SPI_StartMasterTransfer(spi);
+	}
+	#else
+	while (!LL_SPI_IsActiveFlag_TXE(spi)) {
+		/* NOP if buffer is not empty */
+	}
+	#endif /* CONFIG_SOC_SERIES_STM32MP1X */
+
 	if (SPI_WORD_SIZE_GET(data->ctx.config->operation) == 8) {
 		LL_SPI_TransmitData8(spi, tx_frame);
 		/* The update is ignored if TX is off. */
@@ -103,9 +123,18 @@ static void spi_stm32_shift_m(SPI_TypeDef *spi, struct spi_stm32_data *data)
 		spi_context_update_tx(&data->ctx, 2, 1);
 	}
 
-	while (!LL_SPI_IsActiveFlag_RXNE(spi)) {
-		/* NOP */
+	#ifdef CONFIG_SOC_SERIES_STM32MP1X
+	while (!LL_SPI_IsActiveFlag_RXP(spi)) {
+		/* NOP if buffer has less than a packet to read*/
 	}
+	if (LL_SPI_IsEnabled(spi) && LL_SPI_GetMode(spi)) {
+		LL_SPI_StartMasterTransfer(spi);
+	}
+	#else
+	while (!LL_SPI_IsActiveFlag_RXNE(spi)) {
+		/* NOP if buffer is empty */
+	}
+	#endif /* CONFIG_SOC_SERIES_STM32MP1X */
 
 	if (SPI_WORD_SIZE_GET(data->ctx.config->operation) == 8) {
 		rx_frame = LL_SPI_ReceiveData8(spi);
@@ -125,6 +154,36 @@ static void spi_stm32_shift_m(SPI_TypeDef *spi, struct spi_stm32_data *data)
 /* Shift a SPI frame as slave. */
 static void spi_stm32_shift_s(SPI_TypeDef *spi, struct spi_stm32_data *data)
 {
+#ifdef CONFIG_SOC_SERIES_STM32MP1X
+	if (LL_SPI_IsActiveFlag_TXP(spi) && spi_context_tx_on(&data->ctx)) {
+		u16_t tx_frame = spi_stm32_next_tx(data);
+
+		if (SPI_WORD_SIZE_GET(data->ctx.config->operation) == 8) {
+			LL_SPI_TransmitData8(spi, tx_frame);
+			spi_context_update_tx(&data->ctx, 1, 1);
+		} else {
+			LL_SPI_TransmitData16(spi, tx_frame);
+			spi_context_update_tx(&data->ctx, 2, 1);
+		}
+	} else {
+		LL_SPI_DisableIT_TXP(spi);
+	}
+
+	if (LL_SPI_IsActiveFlag_RXP(spi) &&
+	    spi_context_rx_buf_on(&data->ctx)) {
+		u16_t rx_frame;
+
+		if (SPI_WORD_SIZE_GET(data->ctx.config->operation) == 8) {
+			rx_frame = LL_SPI_ReceiveData8(spi);
+			UNALIGNED_PUT(rx_frame, (u8_t *)data->ctx.rx_buf);
+			spi_context_update_rx(&data->ctx, 1, 1);
+		} else {
+			rx_frame = LL_SPI_ReceiveData16(spi);
+			UNALIGNED_PUT(rx_frame, (u16_t *)data->ctx.rx_buf);
+			spi_context_update_rx(&data->ctx, 2, 1);
+		}
+	}
+#else /* not CONFIG_SOC_SERIES_STM32MP1X */
 	if (LL_SPI_IsActiveFlag_TXE(spi) && spi_context_tx_on(&data->ctx)) {
 		u16_t tx_frame = spi_stm32_next_tx(data);
 
@@ -139,7 +198,8 @@ static void spi_stm32_shift_s(SPI_TypeDef *spi, struct spi_stm32_data *data)
 		LL_SPI_DisableIT_TXE(spi);
 	}
 
-	if (LL_SPI_IsActiveFlag_RXNE(spi) && spi_context_rx_buf_on(&data->ctx)) {
+	if (LL_SPI_IsActiveFlag_RXNE(spi) &&
+	    spi_context_rx_buf_on(&data->ctx)) {
 		u16_t rx_frame;
 
 		if (SPI_WORD_SIZE_GET(data->ctx.config->operation) == 8) {
@@ -152,6 +212,7 @@ static void spi_stm32_shift_s(SPI_TypeDef *spi, struct spi_stm32_data *data)
 			spi_context_update_rx(&data->ctx, 2, 1);
 		}
 	}
+#endif /* CONFIC_SOC_SERIES_STM32MP1 */
 }
 
 /*
@@ -177,26 +238,53 @@ static void spi_stm32_complete(struct spi_stm32_data *data, SPI_TypeDef *spi,
 			       int status)
 {
 #ifdef CONFIG_SPI_STM32_INTERRUPT
+#ifdef CONFIG_SOC_SERIES_STM32MP1X
+	LL_SPI_DisableIT_TXP(spi);
+	LL_SPI_DisableIT_RXP(spi);
+	LL_SPI_DisableIT_DXP(spi);
+	LL_SPI_DisableIT_EOT(spi);
+	LL_SPI_DisableIT_TXTF(spi);
+	LL_SPI_DisableIT_UDR(spi);
+	LL_SPI_DisableIT_OVR(spi);
+	LL_SPI_DisableIT_CRCERR(spi);
+	LL_SPI_DisableIT_FRE(spi);
+	LL_SPI_DisableIT_MODF(spi);
+	LL_SPI_DisableIT_TSER(spi);
+#else
 	LL_SPI_DisableIT_TXE(spi);
 	LL_SPI_DisableIT_RXNE(spi);
 	LL_SPI_DisableIT_ERR(spi);
-#endif
+#endif /* CONFIG_SOC_SERIES_STM32MP1X */
+#endif /* CONFIG_SPI_STM32_INTERRUPT */
 
 	spi_context_cs_control(&data->ctx, false);
 
 #if defined(CONFIG_SPI_STM32_HAS_FIFO)
 	/* Flush RX buffer */
+#ifdef CONFIG_SOC_SERIES_STM32MP1X
+	while (LL_SPI_IsActiveFlag_RXP(spi)) {
+		(void)LL_SPI_ReceiveData8(spi);
+	}
+#else
 	while (LL_SPI_IsActiveFlag_RXNE(spi)) {
 		(void) LL_SPI_ReceiveData8(spi);
 	}
-#endif
+#endif	/* CONFIG_SOC_SERIES_STM32MP1X */
+#endif	/* CONFIG_SPI_STM32_HAS_FIFO */
 
 	if (LL_SPI_GetMode(spi) == LL_SPI_MODE_MASTER) {
+#ifdef CONFIG_SOC_SERIES_STM32MP1X
+		while (LL_SPI_IsEnabled(spi) &&
+		       !LL_SPI_IsActiveFlag_MODF(spi) &&
+		       !LL_SPI_IsActiveFlag_TXC(spi)) {
+			/* NOP, see BSY flag in stm32l4xx_ll_spi.h */
+		}
+#else
 		while (LL_SPI_IsActiveFlag_BSY(spi)) {
 			/* NOP */
 		}
+#endif
 	}
-
 	LL_SPI_Disable(spi);
 
 #ifdef CONFIG_SPI_STM32_INTERRUPT
@@ -302,12 +390,6 @@ static int spi_stm32_configure(struct device *dev,
 
 	LL_SPI_DisableCRC(spi);
 
-	if (config->operation & SPI_OP_MODE_SLAVE) {
-		LL_SPI_SetMode(spi, LL_SPI_MODE_SLAVE);
-	} else {
-		LL_SPI_SetMode(spi, LL_SPI_MODE_MASTER);
-	}
-
 	if (config->cs) {
 		LL_SPI_SetNSSMode(spi, LL_SPI_NSS_SOFT);
 	} else {
@@ -318,6 +400,12 @@ static int spi_stm32_configure(struct device *dev,
 		}
 	}
 
+	if (config->operation & SPI_OP_MODE_SLAVE) {
+		LL_SPI_SetMode(spi, LL_SPI_MODE_SLAVE);
+	} else {
+		LL_SPI_SetMode(spi, LL_SPI_MODE_MASTER);
+	}
+
 	if (SPI_WORD_SIZE_GET(config->operation) ==  8) {
 		LL_SPI_SetDataWidth(spi, LL_SPI_DATAWIDTH_8BIT);
 	} else {
@@ -325,8 +413,13 @@ static int spi_stm32_configure(struct device *dev,
 	}
 
 #if defined(CONFIG_SPI_STM32_HAS_FIFO)
+#ifdef CONFIG_SOC_SERIES_STM32MP1X
+	LL_SPI_SetFIFOThreshold(spi, LL_SPI_FIFO_TH_01DATA);
+	/* does not use the full power of I2S */
+#else
 	LL_SPI_SetRxFIFOThreshold(spi, LL_SPI_RX_FIFO_TH_QUARTER);
-#endif
+#endif /* CONFIG_SOC_SERIES_STM32MP1X */
+#endif /* CONFIG_SPI_STM32_HAS_FIFO */
 
 #ifndef CONFIG_SOC_SERIES_STM32F1X
 	LL_SPI_SetStandard(spi, LL_SPI_PROTOCOL_MOTOROLA);
@@ -357,6 +450,21 @@ static int spi_stm32_release(struct device *dev,
 
 	return 0;
 }
+
+#ifdef CONFIG_SOC_SERIES_STM32MP1X
+static void spi_stm32_reset_errors(SPI_TypeDef *spi)
+{
+	LL_SPI_ClearFlag_EOT(spi);
+	LL_SPI_ClearFlag_TXTF(spi);
+	LL_SPI_ClearFlag_UDR(spi);
+	LL_SPI_ClearFlag_OVR(spi);
+	LL_SPI_ClearFlag_CRCERR(spi);
+	LL_SPI_ClearFlag_MODF(spi);
+	LL_SPI_ClearFlag_FRE(spi);
+	LL_SPI_ClearFlag_TSER(spi);
+	LL_SPI_ClearFlag_SUSP(spi);
+}
+#endif /* CONFIG_SOC_SERIES_STM32MP1X */
 
 static int transceive(struct device *dev,
 		      const struct spi_config *config,
@@ -391,17 +499,37 @@ static int transceive(struct device *dev,
 
 #if defined(CONFIG_SPI_STM32_HAS_FIFO)
 	/* Flush RX buffer */
+#ifdef CONFIG_SOC_SERIES_STM32MP1X
+	while (LL_SPI_IsActiveFlag_RXP(spi)) {
+		(void)LL_SPI_ReceiveData8(spi);
+	}
+	spi_stm32_reset_errors(spi);
+#else
 	while (LL_SPI_IsActiveFlag_RXNE(spi)) {
 		(void) LL_SPI_ReceiveData8(spi);
 	}
-#endif
-
+#endif /* CONFIG_SOC_SERIES_STM32MP1X */
+#endif /* CONFIG_SPI_STM32_HAS_FIFO */
 	LL_SPI_Enable(spi);
-
 	/* This is turned off in spi_stm32_complete(). */
 	spi_context_cs_control(&data->ctx, true);
 
 #ifdef CONFIG_SPI_STM32_INTERRUPT
+#ifdef CONFIG_SOC_SERIES_STM32MP1X
+	LL_SPI_EnableIT_EOT(spi);
+	LL_SPI_EnableIT_TXTF(spi);
+	LL_SPI_EnableIT_UDR(spi);
+	LL_SPI_EnableIT_OVR(spi);
+	LL_SPI_EnableIT_CRCERR(spi);
+	LL_SPI_EnableIT_FRE(spi);
+	LL_SPI_EnableIT_MODF(spi);
+	LL_SPI_EnableIT_TSER(spi);
+	if (rx_bufs) {
+		LL_SPI_EnableIT_RXP(spi);
+	}
+	LL_SPI_EnableIT_DXP(spi);
+	LL_SPI_EnableIT_TXP(spi);
+#else
 	LL_SPI_EnableIT_ERR(spi);
 
 	if (rx_bufs) {
@@ -409,6 +537,7 @@ static int transceive(struct device *dev,
 	}
 
 	LL_SPI_EnableIT_TXE(spi);
+#endif  /* CONFIG_SOC_SERIES_STM32MP1X */
 
 	ret = spi_context_wait_for_completion(&data->ctx);
 #else
@@ -424,7 +553,7 @@ static int transceive(struct device *dev,
 	}
 #endif /* CONFIG_SPI_SLAVE */
 
-#endif
+#endif /* CONFIG_SPI_STM32_INTERRUPT */
 
 	spi_context_release(&data->ctx, ret);
 

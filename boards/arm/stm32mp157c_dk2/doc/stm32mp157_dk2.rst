@@ -175,6 +175,8 @@ features:
 +-----------+------------+-------------------------------------+
 | PINMUX    | on-chip    | pinmux                              |
 +-----------+------------+-------------------------------------+
+| SPI       | on-chip    | spi                                 |
++-----------+------------+-------------------------------------+
 
 The default configuration can be found in the defconfig file:
 ``boards/arm/stm32mp157c_dk2/stm32mp157c_dk2_defconfig``
@@ -186,6 +188,7 @@ Connections and IOs
 STM32MP157C-DK2 Discovery Board schematic is available here:
 `STM32MP157C Discovery board schematics`_.
 
+#TODO ADD SPI ARDUINO LINE
 
 Default Zephyr Peripheral Mapping:
 ----------------------------------

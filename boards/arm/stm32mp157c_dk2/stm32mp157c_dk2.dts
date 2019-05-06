@@ -19,6 +19,27 @@
 };
 
 arduino_serial: &uart7 {};
+arduino_spi: &spi4 {};
+
+&spi1 {
+	status = "ok";
+};
+
+&spi2 {
+	status = "ok";
+};
+
+&spi3 {
+	status = "ok";
+};
+
+&spi4 {
+	status = "ok";
+};
+
+&spi5 {
+	status = "ok";
+};
 
 &usart3 {
 	current-speed = <115200>;
