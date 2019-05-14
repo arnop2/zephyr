@@ -33,7 +33,12 @@
 
 /* Offsets */
 #define STATUS_HEADER_READY	0
-#define STATUS_HEADER_TOREAD	3
+#define STATUS_HEADER_READ_L	3
+#ifdef CONFIG_BT_SPI_BLUENRG
+#define STATUS_HEADER_READ_H	4
+#define STATUS_HEADER_WRITE_L	1
+#define STATUS_HEADER_WRITE_H	2
+#endif
 
 #define PACKET_TYPE		0
 #define EVT_HEADER_TYPE		0
@@ -56,9 +61,14 @@
  * Buffer size needs to be at least the size of the larger RX/TX buffer
  * required by the SPI slave, as the legacy spi_transceive requires both RX/TX
  * to be the same length. Size also needs to be compatible with the
- * slave device used (e.g. nRF5X max buffer length for SPIS is 255).
+ * slave device used (e.g. nRF5X max buffer length for SPIS is 255, BlueNRG-MS
+ * max buffer is 65535).
  */
-#define SPI_MAX_MSG_LEN		255 /* As defined by X-NUCLEO-IDB04A1 BSP */
+#ifdef CONFIG_BT_SPI_BLUENRG
+#define SPI_MAX_MSG_LEN		65535
+#else
+#define SPI_MAX_MSG_LEN		255 /* As defined by nRF5X max buffer */
+#endif
 
 static u8_t rxmsg[SPI_MAX_MSG_LEN];
 static u8_t txmsg[SPI_MAX_MSG_LEN];
@@ -303,7 +313,7 @@ static void bt_spi_rx_thread(void)
 	u8_t header_master[5] = { SPI_READ, 0x00, 0x00, 0x00, 0x00 };
 	u8_t header_slave[5];
 	struct bt_hci_acl_hdr acl_hdr;
-	u8_t size = 0U;
+	u16_t size = 0U;
 	int ret;
 
 	(void)memset(&txmsg, 0xFF, SPI_MAX_MSG_LEN);
@@ -322,12 +332,25 @@ static void bt_spi_rx_thread(void)
 				kick_cs();
 				ret = bt_spi_transceive(header_master, 5,
 							header_slave, 5);
-			} while ((((header_slave[STATUS_HEADER_TOREAD] == 0U ||
-				    header_slave[STATUS_HEADER_TOREAD] == 0xFF) &&
-				   !ret)) && exit_irq_high_loop());
+#ifdef CONFIG_BT_SPI_BLUENRG
+			} while (((header_slave[STATUS_HEADER_READY] !=
+				 READY_NOW ||
+				 (header_slave[STATUS_HEADER_READ_L] == 0U &&
+				 header_slave[STATUS_HEADER_READ_H] == 0U)) &&
+				 !ret) && exit_irq_high_loop());
+#else
+			} while ((((header_slave[STATUS_HEADER_READ_L] == 0U ||
+				 header_slave[STATUS_HEADER_READ_L] == 0xFF) &&
+				 !ret)) && exit_irq_high_loop());
+#endif
 
 			if (!ret) {
-				size = header_slave[STATUS_HEADER_TOREAD];
+#ifdef CONFIG_BT_SPI_BLUENRG
+				size = header_slave[STATUS_HEADER_READ_L] |
+				(header_slave[STATUS_HEADER_READ_H] << 8);
+#else
+				size = header_slave[STATUS_HEADER_READ_L];
+#endif
 
 				do {
 					ret = bt_spi_transceive(&txmsg, size,
@@ -350,7 +373,9 @@ static void bt_spi_rx_thread(void)
 			case HCI_EVT:
 				switch (rxmsg[EVT_HEADER_EVENT]) {
 				case BT_HCI_EVT_VENDOR:
-					/* Vendor events are currently unsupported */
+					/* Vendor events are currently
+					 *  unsupported
+					 */
 					bt_spi_handle_vendor_evt(rxmsg);
 					continue;
 				case BT_HCI_EVT_CMD_COMPLETE:
@@ -358,7 +383,8 @@ static void bt_spi_rx_thread(void)
 					buf = bt_buf_get_cmd_complete(K_FOREVER);
 					break;
 				default:
-					buf = bt_buf_get_rx(BT_BUF_EVT, K_FOREVER);
+					buf = bt_buf_get_rx(BT_BUF_EVT,
+							    K_FOREVER);
 					break;
 				}
 
@@ -393,15 +419,10 @@ static int bt_spi_send(struct net_buf *buf)
 {
 	u8_t header[5] = { SPI_WRITE, 0x00,  0x00,  0x00,  0x00 };
 	u32_t pending;
+	u16_t buf_max_size = 0U;
 	int ret;
 
 	BT_DBG("");
-
-	/* Buffer needs an additional byte for type */
-	if (buf->len >= SPI_MAX_MSG_LEN) {
-		BT_ERR("Message too long");
-		return -EINVAL;
-	}
 
 	/* Allow time for the read thread to handle interrupt */
 	while (true) {
@@ -444,6 +465,21 @@ static int bt_spi_send(struct net_buf *buf)
 	k_sem_give(&sem_busy);
 
 	if (!ret) {
+		/* Buffer needs an additional byte for type */
+		if (buf->len >= SPI_MAX_MSG_LEN) {
+			BT_ERR("Message is excedding the %d bits limit",
+			       SPI_MAX_MSG_LEN);
+			return -EINVAL;
+		}
+#ifdef CONFIG_BT_SPI_BLUENRG
+		buf_max_size = rxmsg[STATUS_HEADER_WRITE_L] |
+		(rxmsg[STATUS_HEADER_WRITE_H] << 8);
+		if (buf->len >= buf_max_size) {
+			BT_ERR("Message is bigger than current BlueNRG-MS chip
+				 RX buffer (%d bits)", buf_max_size);
+			return -EINVAL;
+		}
+#endif
 		/* Transmit the message */
 		do {
 			ret = bt_spi_transceive(buf->data, buf->len,
