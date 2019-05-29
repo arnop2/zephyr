@@ -23,9 +23,15 @@
 
 /* physical address of RAM */
 #ifdef CONFIG_XIP
+#ifdef CONFIG_VECT_REGION
+  #define VECT_REGION    VECT
+#endif
   #define ROMABLE_REGION FLASH
   #define RAMABLE_REGION SRAM
 #else
+#ifdef CONFIG_VECT_REGION
+  #define VECT_REGION    VECT
+#endif
   #define ROMABLE_REGION SRAM
   #define RAMABLE_REGION SRAM
 #endif
@@ -38,6 +44,11 @@
 
 #if !defined(SKIP_TO_KINETIS_FLASH_CONFIG)
   #define SKIP_TO_KINETIS_FLASH_CONFIG
+#endif
+
+#ifdef CONFIG_VECT_REGION
+  #define VECT_ADDR CONFIG_VECT_BASE_ADDRESS
+  #define VECT_SIZE CONFIG_VECT_SIZE
 #endif
 
 #define ROM_ADDR (CONFIG_FLASH_BASE_ADDRESS + CONFIG_FLASH_LOAD_OFFSET)
@@ -89,6 +100,9 @@ _region_min_align = 4;
 
 MEMORY
     {
+#ifdef CONFIG_VECT_REGION
+    VECT      	  	  (rx) : ORIGIN = VECT_ADDR, LENGTH = VECT_SIZE
+#endif
     FLASH                 (rx) : ORIGIN = ROM_ADDR, LENGTH = ROM_SIZE
 #ifdef CONFIG_TI_CCFG_PRESENT
     FLASH_CCFG            (rwx): ORIGIN = CCFG_ADDR, LENGTH = CCFG_SIZE
@@ -123,9 +137,12 @@ SECTIONS
 	*(.iplt)
 	}
 
+#ifdef CONFIG_VECT_REGION
+    GROUP_START(VECT_REGION)
+#else
     GROUP_START(ROMABLE_REGION)
-
 	_image_rom_start = ROM_ADDR;
+#endif
 
     SECTION_PROLOGUE(_TEXT_SECTION_NAME,,)
 	{
@@ -172,7 +189,18 @@ SECTIONS
 	KEEP(*(".kinetis_flash_config.*"))
 
 	_vector_end = .;
+
+#ifdef CONFIG_VECT_REGION
+	} GROUP_LINK_IN(VECT_REGION)
+
+GROUP_END(VECT_REGION)
+
+GROUP_START(ROMABLE_REGION)
+
+	_image_rom_start = ROM_ADDR;
+#else
 	} GROUP_LINK_IN(ROMABLE_REGION)
+#endif
 
 #ifdef CONFIG_CODE_DATA_RELOCATION
 
