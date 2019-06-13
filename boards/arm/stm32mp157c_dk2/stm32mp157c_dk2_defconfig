@@ -19,6 +19,9 @@ CONFIG_PINMUX=y
 # clock configuration
 CONFIG_CLOCK_CONTROL=y
 
+#mailbox
+CONFIG_IPM=y
+
 # console (remote proc console by default)
 CONFIG_CONSOLE=y
 CONFIG_RAM_CONSOLE=y

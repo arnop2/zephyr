@@ -25,3 +25,10 @@ config UART_7
 endif # SERIAL
 
 endif # BOARD_STM32MP157_Dk2
+
+if IPM
+
+config IPM_STM32_IPCC
+	default y
+
+endif # IPM

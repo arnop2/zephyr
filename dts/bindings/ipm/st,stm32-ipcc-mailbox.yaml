@@ -10,6 +10,9 @@ inherits:
     !include base.yaml
 
 properties:
+  compatible:
+      constraint: "st,stm32-ipcc-mailbox"
+
   clocks:
     type: array
     category: required

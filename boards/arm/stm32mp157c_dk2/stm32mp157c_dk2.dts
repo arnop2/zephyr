@@ -40,3 +40,7 @@ arduino_serial: &uart7 {};
 	pinctrl-names = "default";
 	status = "okay";
 };
+
+&mailbox {
+	status = "okay";
+};
