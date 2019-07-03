@@ -10,30 +10,9 @@ if BOARD_DISCO_L475_IOT1
 config BOARD
 	default "disco_l475_iot1"
 
-if BT
-
-choice CLOCK_STM32_SYSCLK_SRC
-	default CLOCK_STM32_SYSCLK_SRC_MSI
-endchoice
-
-if CLOCK_STM32_SYSCLK_SRC_MSI
-
-config CLOCK_STM32_MSI_RANGE
-	default 8
-
-config SYS_CLOCK_HW_CYCLES_PER_SEC
-	default 16000000
-
-endif # CLOCK_STM32_SYSCLK_SRC_MSI
-
-endif #BT
-
-if !BT
 choice CLOCK_STM32_SYSCLK_SRC
 	default CLOCK_STM32_SYSCLK_SRC_PLL
 endchoice
-
-endif #BT
 
 if CLOCK_STM32_SYSCLK_SRC_PLL
 
