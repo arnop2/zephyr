@@ -35,12 +35,12 @@
 	mcusramcode: memory2@10000000 {
 		device_type = "memory";
 		compatible = "mmio-sram";
-		reg = <0x10000000 0x30000>;
+		reg = <0x10000000 0x20000>;
 	};
 	mcusramdata: memory3@10030000 {
 		device_type = "memory";
 		compatible = "mmio-sram";
-		reg = <0x10030000 0x10000>;
+		reg = <0x10020000 0x20000>;
 	};
 	mcusram3: memory4@10040000 {
 		device_type = "memory";
