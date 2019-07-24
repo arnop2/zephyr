@@ -194,7 +194,9 @@ static void spi_stm32_complete(struct spi_stm32_data *data, SPI_TypeDef *spi,
 
 	if (LL_SPI_GetMode(spi) == LL_SPI_MODE_MASTER) {
 		while (LL_SPI_IsActiveFlag_BSY(spi)) {
-			/* NOP */
+			if (LL_SPI_IsActiveFlag_MODF(spi)) {
+				LL_SPI_ClearFlag_MODF(spi);
+			}
 		}
 	}
 
