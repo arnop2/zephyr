@@ -193,7 +193,9 @@ static void spi_stm32_complete(struct spi_stm32_data *data, SPI_TypeDef *spi,
 
 	if (LL_SPI_GetMode(spi) == LL_SPI_MODE_MASTER) {
 		while (LL_SPI_IsActiveFlag_BSY(spi)) {
-			/* NOP */
+			if (LL_SPI_IsActiveFlag_MODF(spi)) {
+				LL_SPI_ClearFlag_MODF(spi);
+			}
 		}
 	}
 
@@ -302,13 +304,7 @@ static int spi_stm32_configure(struct device *dev,
 
 	LL_SPI_DisableCRC(spi);
 
-	if (config->operation & SPI_OP_MODE_SLAVE) {
-		LL_SPI_SetMode(spi, LL_SPI_MODE_SLAVE);
-	} else {
-		LL_SPI_SetMode(spi, LL_SPI_MODE_MASTER);
-	}
-
-	if (config->cs) {
+	if (config->cs || !IS_ENABLED(CONFIG_SPI_STM32_USE_HW_SS)) {
 		LL_SPI_SetNSSMode(spi, LL_SPI_NSS_SOFT);
 	} else {
 		if (config->operation & SPI_OP_MODE_SLAVE) {
@@ -316,6 +312,12 @@ static int spi_stm32_configure(struct device *dev,
 		} else {
 			LL_SPI_SetNSSMode(spi, LL_SPI_NSS_HARD_OUTPUT);
 		}
+	}
+
+	if (config->operation & SPI_OP_MODE_SLAVE) {
+		LL_SPI_SetMode(spi, LL_SPI_MODE_SLAVE);
+	} else {
+		LL_SPI_SetMode(spi, LL_SPI_MODE_MASTER);
 	}
 
 	if (SPI_WORD_SIZE_GET(config->operation) ==  8) {
