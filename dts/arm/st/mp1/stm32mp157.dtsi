@@ -293,6 +293,15 @@
 			status = "disabled";
 			label = "MAILBOX_0";
 		};
+
+		i2c_rpmsg: i2c_rpmsg@0{
+			compatible = "rpmsg-i2c";
+			reg = <0x0 1>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+			status = "disabled";
+			label = "RPMSG_I2C";
+		};
 	};
 };
 
