@@ -1,0 +1,44 @@
+/*
+ * Copyright (c) 2019, STMICROLECTRONICS
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/ {
+	chosen {
+		/*
+		 * shared memory reserved for the inter-processor communication
+		 */
+		zephyr,ipc_shm = &mcusram3;
+	};
+
+	mcusram3: memory1@10040000 {
+		compatible = "mmio-sram";
+		reg = <0x10040000 DT_SIZE_K(64)>;
+	};
+};
+
+&mcusram {
+	reg = <0x10000000 DT_SIZE_K(256)>;
+};
+
+&i2c_rpmsg {
+	status = "okay";
+};
+
+&arduino_i2c {
+	status = "okay";
+	ssd1306@3c {
+		compatible = "solomon,ssd1306fb";
+		reg = <0x3c>;
+		label = "SSD1306";
+		width = <128>;
+		height = <64>;
+		segment-offset = <0>;
+		page-offset = <0>;
+		display-offset = <0>;
+		segment-remap;
+		com-invdir;
+		prechargep = <0x22>;
+	};
+};
