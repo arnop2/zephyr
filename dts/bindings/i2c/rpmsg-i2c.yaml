@@ -1,0 +1,11 @@
+# Copyright (c) 2019 ST MICROELECTRONIC
+# SPDX-License-Identifier: Apache-2.0
+
+title: RPMSG I2C
+
+description: >
+    This binding gives a virtual support of I2C over RPMsg
+
+compatible: "rpmsg-i2c"
+
+include: i2c-controller.yaml
