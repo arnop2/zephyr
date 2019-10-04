@@ -1,0 +1,10 @@
+sample:
+    description: This app provides an example of how to integrate OpenAMP
+        with Zephyr in cluding a esource table.
+    name: OpenAMP with resource table example integration
+tests:
+    sample.subsys.ipc.openamp_o_uart:
+        build_only: true
+        platform_whitelist: nucleo_f411re
+        tags: ipm
+        depends_on: arduino_i2c
