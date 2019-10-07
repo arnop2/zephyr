@@ -1,0 +1,10 @@
+sample:
+    description: This app provides an example of how to use ssd1306 
+     to display sensor values.
+    name: proxy and distance display
+tests:
+    sample.subsys.ipc.tof_on_display:
+        build_only: true
+        platform_whitelist: disco_l475_iot1
+        tags: sensors
+        depends_on: arduino_i2c
