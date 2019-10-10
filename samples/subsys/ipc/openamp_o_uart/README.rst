@@ -65,6 +65,8 @@ Information on console related to the rpmsg channels creation:
   [   99.196227] uart_rpmsg serial1-0: creating channel rpmsg-button addr 0x0
   [   99.202103] input: rpmsg virtual button as /devices/virtual/input/input1
   [   99.262179] uart_rpmsg serial1-0: creating channel rpmsg-vl5310x addr 0x1
+  [   99.491174] uart_rpmsg serial1-0: creating channel rpmsg-tty-channel addr 0x2
+  [   99.497605] rpmsg_tty serial1-0.rpmsg-tty-channel.-1.2: new channel: 0x402 -> 0x2 : ttyRPMSG0
 
 Read the distance value provided by the Tof sensor on thel475 iot1 disco board:
 
@@ -96,3 +98,15 @@ Detect proxy event provided by the Tof sensor on the l475 iot1 disco board:
   Event: time 1548326283.037408, -------------- SYN_REPORT ------------
   Event: time 1548326283.813357, type 1 (EV_KEY), code 256 (BTN_0), value 0
   Event: time 1548326283.813357, -------------- SYN_REPORT ------------
+
+End the demo application on the l475 iot1 disco board:
+
+.. code-block:: console
+
+  root@stm32mp1:~# echo stop >/dev/ttyRPMSG0
+  root@stm32mp1:~# [  897.118198] uart_rpmsg serial1-0: destroying channel rpmsg-button addr 0x0
+  [  897.155425] rpmsg_button serial1-0.rpmsg-button.-1.0: rpmsg button device is removed
+  [  897.247167] uart_rpmsg serial1-0: destroying channel rpmsg-vl5310x addr 0x1
+  [  897.253175] rpmsg_vl5310x serial1-0.rpmsg-vl5310x.-1.1: rpmsg vl5310x device is removed
+  [  897.376171] uart_rpmsg serial1-0: destroying channel rpmsg-tty-channel addr 0x2
+  [  897.382921] rpmsg_tty serial1-0.rpmsg-tty-channel.-1.2: rpmsg tty device 0 is removed

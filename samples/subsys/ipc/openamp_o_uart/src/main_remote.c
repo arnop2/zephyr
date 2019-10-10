@@ -31,6 +31,9 @@ LOG_MODULE_REGISTER(openamp_uart, LOG_LEVEL_DBG);
 #define RPMSG_NS_ADDR		(0x35)
 #define RPMSG_SERVICE_NAME	"rpmsg-button"
 
+#define STOP_REQ	1
+#define RESTART_REQ	2
+
 #define APP_TASK_STACK_SIZE (4096)
 K_THREAD_STACK_DEFINE(thread_stack, APP_TASK_STACK_SIZE);
 static struct k_thread thread_data;
@@ -67,6 +70,7 @@ enum rpmsg_ns_flags {
 
 static int rpmsg_proxy_cb(void *data, uint32_t len);
 static int rpmsg_dist_cb(void *data, uint32_t len);
+static int rpmsg_shutdown_cb(void *data, uint32_t len);
 
 static struct rpmsg_endpoint proxy_ept = {
 	"rpmsg-button",
@@ -82,7 +86,15 @@ static struct rpmsg_endpoint dist_ept = {
 	-1
 };
 
-static struct rpmsg_endpoint *ept_tab[] = {&proxy_ept, &dist_ept, NULL};
+static struct rpmsg_endpoint shutdown_ept = {
+	"rpmsg-tty-channel",
+	rpmsg_shutdown_cb,
+	2,
+	-1
+};
+
+static struct rpmsg_endpoint *ept_tab[] = {
+	&proxy_ept, &dist_ept, &shutdown_ept, NULL};
 static u8_t recv_rpmsg[RPMSG_MAX_BUF_SIZE];
 static u8_t recvData[RPMSG_MAX_BUF_SIZE];
 static int rx_data_idx;
@@ -102,6 +114,7 @@ static bool display_available;
 
 static K_SEM_DEFINE(data_sem, 0, 1);
 static u8_t proxy_val;
+static u8_t stop_mode;
 
 static inline int uart_rpmsg_send(struct device *dev_uart, uint32_t src,
 				  uint32_t dst, const void *data, int len)
@@ -137,6 +150,20 @@ static int rpmsg_proxy_cb(void *data, uint32_t len)
 {
 	LOG_ERR("%s:\n", __func__);
 
+	return 0;
+}
+
+static int rpmsg_shutdown_cb(void *data, uint32_t len)
+{
+	LOG_ERR("%s: %d\n", __func__, len);
+
+	if (!strncmp(data, "stop", 4)) {
+		LOG_DBG("%s: shutdown requested\n", __func__);
+		stop_mode = STOP_REQ;
+	} else if (!strncmp(data, "restart", 7)) {
+		LOG_DBG("%s: restart requested\n", __func__);
+		stop_mode = RESTART_REQ;
+	}
 	return 0;
 }
 
@@ -349,7 +376,6 @@ static void app_task(void *arg1, void *arg2, void *arg3)
 
 	LOG_INF("\r\nrpmsg over uart demo started\n");
 
-	init_display();
 	init_sensors();
 
 	dev_uart = device_get_binding(DT_UART_STM32_UART_4_NAME);
@@ -362,6 +388,9 @@ static void app_task(void *arg1, void *arg2, void *arg3)
 	uart_irq_callback_set(dev_uart, uart_callback);
 
 	uart_irq_rx_enable(dev_uart);
+
+start_task:
+	init_display();
 
 	if (display_available) {
 		line = 0;
@@ -387,6 +416,13 @@ static void app_task(void *arg1, void *arg2, void *arg3)
 
 	/*ept creation*/
 	if (uart_rpmsg_create_ept(dev_uart, &dist_ept) != 0) {
+		LOG_ERR("rpmsg ns service failed\n");
+		return;
+	}
+
+	k_sleep(200);
+	/*ept creation*/
+	if (uart_rpmsg_create_ept(dev_uart, &shutdown_ept) != 0) {
 		LOG_ERR("rpmsg ns service failed\n");
 		return;
 	}
@@ -435,19 +471,36 @@ static void app_task(void *arg1, void *arg2, void *arg3)
 			cfb_framebuffer_finalize(dev_display);
 
 		receive_message();
+		if (stop_mode)
+			goto end_task;
 	}
 
 end_task:
-	k_sleep(2000);
+	k_sleep(200);
+
+	stop_display();
 
 	if (uart_rpmsg_destroy_ept(dev_uart, &proxy_ept) != 0) {
 		LOG_ERR("rpmsg ns service destroy failed\n");
 		return;
 	}
 
+	k_sleep(100);
 	if (uart_rpmsg_destroy_ept(dev_uart, &dist_ept) != 0) {
 		LOG_ERR("rpmsg ns service destroy failed\n");
 		return;
+	}
+	k_sleep(100);
+
+	if (uart_rpmsg_destroy_ept(dev_uart, &shutdown_ept) != 0) {
+		LOG_ERR("rpmsg ns service destroy failed\n");
+		return;
+	}
+
+	k_sleep(100);
+	if (stop_mode == RESTART_REQ) {
+		stop_mode = 0;
+		goto start_task;
 	}
 
 	printk("sensor task ended\n");
@@ -455,7 +508,6 @@ end_task:
 
 void main(void)
 {
-
 	k_thread_create(&thread_data, thread_stack, APP_TASK_STACK_SIZE,
 			(k_thread_entry_t)app_task,
 			NULL, NULL, NULL, K_PRIO_COOP(7), 0, 0);
