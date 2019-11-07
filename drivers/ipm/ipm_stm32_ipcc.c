@@ -295,7 +295,7 @@ static const struct stm32_ipcc_mailbox_config stm32_ipcc_mailbox_0_config = {
 DEVICE_AND_API_INIT(mailbox_0, DT_INST_0_ST_STM32_IPCC_MAILBOX_LABEL,
 		    &stm32_ipcc_mailbox_init,
 		    &stm32_IPCC_data, &stm32_ipcc_mailbox_0_config,
-		    POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT,
+		    POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_OBJECTS,
 		    &stm32_ipcc_mailbox_driver_api);
 
 static void stm32_ipcc_mailbox_config_func(struct device *dev)
