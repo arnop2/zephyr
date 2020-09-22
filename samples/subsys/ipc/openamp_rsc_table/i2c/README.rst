@@ -10,7 +10,7 @@ This application demonstrates how to use OpenAMP to share an I2C bus between
 Zephyr and a remote processor. It is designed to implementa proxy to mux I2C
 communication 
 demonstrate how to integrate OpenAMP with Zephyr both from a build perspective
-and code.  Currently this integration is specific to the LPC54114 SoC.
+and code.  Currently this integration is specific to the STM32MP1 SoC.
 
 requested Hardware
 *************************
